@@ -70,7 +70,7 @@ def infer_subject_from_description(description):
     """Infer subject from the LO description text."""
     desc_lower = description.lower()
     
-    # World Around Us indicators (check first - more specific)
+
     if any(kw in desc_lower for kw in ['natural', 'insects', 'plants', 'birds', 'animals',
                                         'environment', 'sun', 'moon', 'stars', 'planets',
                                         'resources', 'houses', 'relationships', 'geographical features']):
@@ -107,10 +107,10 @@ def process_stage(data, stage_name):
     """Process all data for a specific stage."""
     rows = []
     
-    # Collect chart info: {(lo_code, description): subject}
+
     chart_info = {}
     
-    # First pass: collect all charts with district data and infer subjects
+
     for entry in data:
         if entry.get('stage') != stage_name:
             continue
@@ -118,11 +118,11 @@ def process_stage(data, stage_name):
             title = chart.get('title', '')
             lo_code = extract_lo_code(title)
             
-            # Skip summary charts
+
             if 'glance' in title.lower() or not lo_code:
                 continue
             
-            # Check if this chart has district data (more than 2 points)
+
             has_district_data = False
             for series in chart.get('series', []):
                 if len(series.get('data', [])) > 2:
@@ -130,14 +130,14 @@ def process_stage(data, stage_name):
                     break
             
             if has_district_data:
-                # Try to get subject from series name first
+
                 subject = None
                 for series in chart.get('series', []):
                     subject = get_subject_from_series(series.get('name', ''))
                     if subject:
                         break
                 
-                # If not found, infer from title/description
+
                 if not subject:
                     subject = infer_subject_from_description(title)
                 
