@@ -53,12 +53,12 @@ async def extract_competency_scores_from_page(page, state_code, state_name, stag
     """Extract competency scores from the dashboard page by parsing the chart data"""
     results = []
     
-    # Wait for the page to fully load
+
     await asyncio.sleep(3)
     
-    # Try to get data from the JavaScript variables in the page
+
     try:
-        # Get the dashboard data from the JavaScript file
+        # the dashboard data from the JavaScript file
         dashboard_data = await page.evaluate("""
             () => {
                 if (typeof dashboardVisualizations !== 'undefined') {
@@ -86,7 +86,7 @@ async def scrape_state_data(page, state_code, state_name, stage_key, stage_info)
         await page.goto(url, wait_until="networkidle", timeout=60000)
         await asyncio.sleep(5)  # Wait for JavaScript to fully render
         
-        # Get the visualization data
+
         data = await extract_competency_scores_from_page(page, state_code, state_name, stage_info['name'], stage_info)
         return data
     except Exception as e:
@@ -95,7 +95,7 @@ async def scrape_state_data(page, state_code, state_name, stage_key, stage_info)
 
 async def fetch_dashboard_js_data(page, dashboard_id):
     """Fetch and parse the dashboard JavaScript data file"""
-    # Try different file patterns
+
     for suffix in range(50, 150):
         url = f"https://parakh.ncert.gov.in/dashboard/files/dashboardData/{dashboard_id}_dashData_{suffix}.js"
         try:
@@ -121,22 +121,20 @@ async def parse_competencies_from_js(js_content, stage_name):
     """Parse competency information from JavaScript content"""
     competencies = []
     
-    # Extract competency codes and descriptions using regex
-    # Pattern to match competency definitions like "C-1.1", "C-10.5", etc.
+
     pattern = r'"sg":\{"en":"(C-\d+\.\d+[^"]*)"'
     matches = re.findall(pattern, js_content)
     
-    # Also extract the full indicator descriptions
+
     indicator_pattern = r'"sgtpid":"ind","sg":\{"en":"([^"]+)"'
     indicator_matches = re.findall(indicator_pattern, js_content)
     
-    # Extract subjects
     subject_pattern = r'<h6>([^<]+)</h6>'
     subjects = re.findall(subject_pattern, js_content)
     
     seen = set()
     for match in matches:
-        # Clean up the competency code
+
         code = match.strip()
         if code and code.startswith('C-') and code not in seen:
             seen.add(code)
@@ -152,7 +150,7 @@ async def extract_data_with_api(page, state_code, state_name):
     results = []
     
     try:
-        # Fetch data from API
+
         api_data = await page.evaluate(f"""
             async () => {{
                 const resp = await fetch('https://dashboard.parakh.ncert.gov.in/api/getData?areaId={state_code}');
@@ -181,7 +179,7 @@ async def scrape_all_states():
         context = await browser.new_context()
         page = await context.new_page()
         
-        # First, get the area data to understand the structure
+
         print("\nFetching area data...")
         await page.goto("https://dashboard.parakh.ncert.gov.in/en", wait_until="networkidle", timeout=60000)
         
@@ -189,7 +187,7 @@ async def scrape_all_states():
         if area_data:
             print(f"  Found {len(area_data.get('data', []))} areas")
             
-            # Save area data for reference
+
             with open("/Users/avra/paragh/area_data.json", "w") as f:
                 json.dump(area_data, f, indent=2)
         
