@@ -3,7 +3,7 @@ import json
 with open('/Users/avra/paragh/all_results.json', 'r') as f:
     data = json.load(f)
 
-# Check chart titles for competency descriptions
+# Check chart titles for competency description
 for result in data:
     if result['state'] == 'Rajasthan' and result['stage'] == 'Middle Stage':
         print(f"Found: {result['state']} - {result['stage']}")
